@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMainWindow));
             this.BuildButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -36,9 +35,7 @@
             this.SelectButton = new System.Windows.Forms.Button();
             this.textBoxLog = new System.Windows.Forms.TextBox();
             this.backgroundWorkerExec = new System.ComponentModel.BackgroundWorker();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.buttonHelp = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // BuildButton
@@ -89,6 +86,7 @@
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxLog.Size = new System.Drawing.Size(231, 258);
             this.textBoxLog.TabIndex = 4;
+            this.textBoxLog.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxLog_MouseDoubleClick);
             // 
             // backgroundWorkerExec
             // 
@@ -120,6 +118,7 @@
             this.Controls.Add(this.textBoxProjectPath);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BuildButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormMainWindow";
@@ -127,7 +126,6 @@
             this.TopMost = true;
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxProjectPath_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxProjectPath_DragEnter);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -141,7 +139,6 @@
         private System.Windows.Forms.Button SelectButton;
         private System.Windows.Forms.TextBox textBoxLog;
         private System.ComponentModel.BackgroundWorker backgroundWorkerExec;
-        private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button buttonHelp;
     }
 }

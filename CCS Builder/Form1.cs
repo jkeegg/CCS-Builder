@@ -16,12 +16,14 @@ namespace CCS_Builder
 {
     public partial class FormMainWindow : Form
     {
+        FromDetail dlgDetail;
         public FormMainWindow()
         {
             InitializeComponent();
             this.textBoxProjectPath.Text = Settings1.Default.last_workspace;
             this.textBoxProjectPath.SelectionStart = this.textBoxProjectPath.TextLength; 
             this.textBoxProjectPath.ScrollToCaret();
+            dlgDetail = new FromDetail(this.textBoxLog);
         }
 
         private void BuildButton_Click(object sender, EventArgs e)
@@ -202,7 +204,12 @@ namespace CCS_Builder
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(string.Format("使用方法:\r\n1.选择或拖放CCSv5 Workspace目录下的工程目录到程序窗口\r\n2.点击Build编译工程\r\n3.程序默认扫描CCSv5安装路径,若找不到eclipsec.exe,点击Build会弹窗供选择,按住Shift点击Build,可强制选择\r\n\r\n当前配置:\r\neclipsec path = {0}\r\n\r\n\r\n\r\nCopyright © LiuChen. All Rights Reserved.", Settings1.Default.eclipsec_path), "帮助", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            MessageBox.Show(string.Format("使用方法:\r\n1.选择或拖放CCSv5 Workspace目录下的工程目录到程序窗口\r\n2.点击Build编译工程\r\n3.程序默认扫描CCSv5安装路径,若找不到eclipsec.exe,点击Build会弹窗供选择,按住Shift点击Build,可强制选择\r\n4.双击日志窗口可弹出更大窗口显示日志\r\n\r\n当前配置:\r\neclipsec path = {0}\r\n\r\n\r\n\r\nCopyright © LiuChen. All Rights Reserved.", Settings1.Default.eclipsec_path), "帮助", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        }
+
+        private void textBoxLog_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            dlgDetail.Show();
         }
     }
 }
