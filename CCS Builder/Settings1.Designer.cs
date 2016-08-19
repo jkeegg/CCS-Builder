@@ -38,12 +38,12 @@ namespace CCS_Builder {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string last_workspace {
+        public string workspace_path {
             get {
-                return ((string)(this["last_workspace"]));
+                return ((string)(this["workspace_path"]));
             }
             set {
-                this["last_workspace"] = value;
+                this["workspace_path"] = value;
             }
         }
     }

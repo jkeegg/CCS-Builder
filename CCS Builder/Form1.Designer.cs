@@ -28,23 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMainWindow));
             this.BuildButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBoxProjectPath = new System.Windows.Forms.TextBox();
             this.SelectButton = new System.Windows.Forms.Button();
             this.textBoxLog = new System.Windows.Forms.TextBox();
             this.backgroundWorkerExec = new System.ComponentModel.BackgroundWorker();
             this.buttonHelp = new System.Windows.Forms.Button();
+            this.comboBoxProjectPath = new System.Windows.Forms.ComboBox();
+            this.toolTipPath = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // BuildButton
             // 
+            this.BuildButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BuildButton.Location = new System.Drawing.Point(137, 56);
             this.BuildButton.Name = "BuildButton";
             this.BuildButton.Size = new System.Drawing.Size(106, 23);
             this.BuildButton.TabIndex = 0;
             this.BuildButton.Text = "Build";
+            this.toolTipPath.SetToolTip(this.BuildButton, "Build project(F5)");
             this.BuildButton.UseVisualStyleBackColor = true;
             this.BuildButton.Click += new System.EventHandler(this.BuildButton_Click);
             // 
@@ -57,23 +61,15 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "ProjectPath";
             // 
-            // textBoxProjectPath
-            // 
-            this.textBoxProjectPath.AllowDrop = true;
-            this.textBoxProjectPath.Location = new System.Drawing.Point(14, 29);
-            this.textBoxProjectPath.Name = "textBoxProjectPath";
-            this.textBoxProjectPath.Size = new System.Drawing.Size(229, 21);
-            this.textBoxProjectPath.TabIndex = 2;
-            this.textBoxProjectPath.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxProjectPath_DragDrop);
-            this.textBoxProjectPath.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxProjectPath_DragEnter);
-            // 
             // SelectButton
             // 
+            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SelectButton.Location = new System.Drawing.Point(12, 56);
             this.SelectButton.Name = "SelectButton";
             this.SelectButton.Size = new System.Drawing.Size(109, 23);
             this.SelectButton.TabIndex = 3;
             this.SelectButton.Text = "Select";
+            this.toolTipPath.SetToolTip(this.SelectButton, "Select a project directory");
             this.SelectButton.UseVisualStyleBackColor = true;
             this.SelectButton.Click += new System.EventHandler(this.SelectButton_Click);
             // 
@@ -86,6 +82,7 @@
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxLog.Size = new System.Drawing.Size(231, 258);
             this.textBoxLog.TabIndex = 4;
+            this.toolTipPath.SetToolTip(this.textBoxLog, "Double click to popup");
             this.textBoxLog.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxLog_MouseDoubleClick);
             // 
             // backgroundWorkerExec
@@ -97,6 +94,7 @@
             // 
             // buttonHelp
             // 
+            this.buttonHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonHelp.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonHelp.Location = new System.Drawing.Point(168, 3);
             this.buttonHelp.Name = "buttonHelp";
@@ -106,26 +104,39 @@
             this.buttonHelp.UseVisualStyleBackColor = true;
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
+            // comboBoxProjectPath
+            // 
+            this.comboBoxProjectPath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxProjectPath.FormattingEnabled = true;
+            this.comboBoxProjectPath.Location = new System.Drawing.Point(12, 30);
+            this.comboBoxProjectPath.Name = "comboBoxProjectPath";
+            this.comboBoxProjectPath.Size = new System.Drawing.Size(231, 20);
+            this.comboBoxProjectPath.TabIndex = 6;
+            this.comboBoxProjectPath.MouseHover += new System.EventHandler(this.comboBoxProjectPath_MouseHover);
+            this.comboBoxProjectPath.MouseMove += new System.Windows.Forms.MouseEventHandler(this.comboBoxProjectPath_MouseMove);
+            // 
             // FormMainWindow
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(255, 355);
+            this.Controls.Add(this.comboBoxProjectPath);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.textBoxLog);
             this.Controls.Add(this.SelectButton);
-            this.Controls.Add(this.textBoxProjectPath);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BuildButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FormMainWindow";
             this.Text = "CCS Builder";
             this.TopMost = true;
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxProjectPath_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxProjectPath_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMainWindow_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -135,11 +146,12 @@
 
         private System.Windows.Forms.Button BuildButton;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxProjectPath;
         private System.Windows.Forms.Button SelectButton;
         private System.Windows.Forms.TextBox textBoxLog;
         private System.ComponentModel.BackgroundWorker backgroundWorkerExec;
         private System.Windows.Forms.Button buttonHelp;
+        private System.Windows.Forms.ComboBox comboBoxProjectPath;
+        private System.Windows.Forms.ToolTip toolTipPath;
     }
 }
 

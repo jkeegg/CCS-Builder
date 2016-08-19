@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FromDetail));
             this.textBoxDetail = new System.Windows.Forms.TextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // textBoxDetail
@@ -42,6 +44,7 @@
             this.textBoxDetail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxDetail.Size = new System.Drawing.Size(695, 351);
             this.textBoxDetail.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.textBoxDetail, "Double click to hide");
             this.textBoxDetail.TextChanged += new System.EventHandler(this.textBoxDetail_TextChanged);
             this.textBoxDetail.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxDetail_MouseDoubleClick);
             // 
@@ -64,6 +67,7 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBoxDetail;
+        private System.Windows.Forms.ToolTip toolTip1;
 
     }
 }

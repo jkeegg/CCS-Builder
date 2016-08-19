@@ -20,16 +20,48 @@ namespace CCS_Builder
         public FormMainWindow()
         {
             InitializeComponent();
-            this.textBoxProjectPath.Text = Settings1.Default.last_workspace;
-            this.textBoxProjectPath.SelectionStart = this.textBoxProjectPath.TextLength; 
-            this.textBoxProjectPath.ScrollToCaret();
             dlgDetail = new FromDetail(this.textBoxLog);
+
+            string[] currentPaths = Settings1.Default.workspace_path.Split('?');
+
+            foreach (string a in currentPaths)
+            {
+                if (a != null && Directory.Exists(a))
+                {
+                    bool dup = false;
+                    foreach (string b in this.comboBoxProjectPath.Items)
+                    {
+                        if (b == a)
+                            dup = true;
+                    }
+
+                    if (!dup)
+                        this.comboBoxProjectPath.Items.Add(a); 
+                }
+                    
+            }
+            comboBoxProjectPath.SelectedIndex = comboBoxProjectPath.Items.Count - 1;
         }
 
         private void BuildButton_Click(object sender, EventArgs e)
         {
-            Settings1.Default.last_workspace = this.textBoxProjectPath.Text;
-            Settings1.Default.Save();
+            if (Directory.Exists(this.comboBoxProjectPath.Text))
+            {
+                bool dup = false;
+                foreach (string a in this.comboBoxProjectPath.Items)
+                {
+                    if (a == this.comboBoxProjectPath.Text)
+                        dup = true;
+                }
+
+                if (!dup)
+                {
+                    this.comboBoxProjectPath.Items.Add(this.comboBoxProjectPath.Text);
+                    Settings1.Default.workspace_path += "?";
+                    Settings1.Default.workspace_path += this.comboBoxProjectPath.Text;
+                    Settings1.Default.Save();
+                }
+            }
             string default_exe = Settings1.Default.eclipsec_path;
             if (!File.Exists(default_exe) || (Control.ModifierKeys == Keys.Shift))
             {
@@ -47,7 +79,7 @@ namespace CCS_Builder
                     return;
             }
             bwArgs args = new bwArgs();
-            args.ws_path = textBoxProjectPath.Text;
+            args.ws_path = comboBoxProjectPath.Text;
             args.eclipsec_path = default_exe;
             BuildButton.Enabled = false;
             textBoxLog.Text = ">>>> Start call CCSv5 <<<<\r\n\r\n";
@@ -60,9 +92,7 @@ namespace CCS_Builder
 
             if (FolderDialog.ShowDialog() == DialogResult.OK)
             {
-                this.textBoxProjectPath.Text = FolderDialog.SelectedPath;
-                this.textBoxProjectPath.SelectionStart = this.textBoxProjectPath.TextLength;
-                this.textBoxProjectPath.ScrollToCaret();
+                this.comboBoxProjectPath.Text = FolderDialog.SelectedPath;
             }
 
             //OpenFileDialog fileDialog = new OpenFileDialog();
@@ -90,9 +120,7 @@ namespace CCS_Builder
             {
                 if (Path.GetExtension(file) == "")  //判断文件类型，只接受txt文件
                 {
-                    textBoxProjectPath.Text = file;
-                    this.textBoxProjectPath.SelectionStart = this.textBoxProjectPath.TextLength;
-                    this.textBoxProjectPath.ScrollToCaret();
+                    comboBoxProjectPath.Text = file;
                     return;
                 }
             }
@@ -143,7 +171,14 @@ namespace CCS_Builder
                     //MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                tmp = string.Format("-noSplash -data \"{0}\" -application com.ti.ccstudio.apps.projectBuild -ccs.configuration Release -ccs.buildType incremental -ccs.projects {1}", ws, pj);
+
+                {
+                    string msg;
+                    msg = string.Format("Start with...\r\nWorkspace = {0}\r\nProject = {1}", ws, pj);
+                    backgroundWorkerExec.ReportProgress(0, msg);
+                }
+
+                tmp = string.Format("-noSplash -data \"{0}\" -application com.ti.ccstudio.apps.projectBuild -ccs.autoOpen -ccs.configuration Release -ccs.buildType incremental -ccs.projects {1}", ws, pj);
                 //backgroundWorkerExec.ReportProgress(0, string.Format("Compile command:\r\n{0}\r\n\r\n", tmp));
                 p.StartInfo.Arguments = tmp;
                 p.StartInfo.UseShellExecute = false;
@@ -210,6 +245,25 @@ namespace CCS_Builder
         private void textBoxLog_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             dlgDetail.Show();
+            dlgDetail.Activate();
+        }
+
+        private void comboBoxProjectPath_MouseMove(object sender, MouseEventArgs e)
+        {
+            //this.toolTipPath.SetToolTip(this.comboBoxProjectPath, this.comboBoxProjectPath.Text);
+        }
+
+        private void comboBoxProjectPath_MouseHover(object sender, EventArgs e)
+        {
+            this.toolTipPath.SetToolTip(this.comboBoxProjectPath, this.comboBoxProjectPath.Text);
+        }
+
+        private void FormMainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                BuildButton.PerformClick();
+            }
         }
     }
 }
