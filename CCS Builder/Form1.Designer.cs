@@ -38,14 +38,17 @@
             this.buttonHelp = new System.Windows.Forms.Button();
             this.comboBoxProjectPath = new System.Windows.Forms.ComboBox();
             this.toolTipPath = new System.Windows.Forms.ToolTip(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.comboBoxBuildConfiguration = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // BuildButton
             // 
             this.BuildButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BuildButton.Location = new System.Drawing.Point(137, 56);
+            this.BuildButton.Location = new System.Drawing.Point(295, 36);
             this.BuildButton.Name = "BuildButton";
-            this.BuildButton.Size = new System.Drawing.Size(106, 23);
+            this.BuildButton.Size = new System.Drawing.Size(59, 22);
             this.BuildButton.TabIndex = 0;
             this.BuildButton.Text = "Build";
             this.toolTipPath.SetToolTip(this.BuildButton, "Build project(F5)");
@@ -55,7 +58,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Location = new System.Drawing.Point(13, 11);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(71, 12);
             this.label1.TabIndex = 1;
@@ -64,9 +67,9 @@
             // SelectButton
             // 
             this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SelectButton.Location = new System.Drawing.Point(12, 56);
+            this.SelectButton.Location = new System.Drawing.Point(295, 8);
             this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(109, 23);
+            this.SelectButton.Size = new System.Drawing.Size(59, 22);
             this.SelectButton.TabIndex = 3;
             this.SelectButton.Text = "Select";
             this.toolTipPath.SetToolTip(this.SelectButton, "Select a project directory");
@@ -75,12 +78,12 @@
             // 
             // textBoxLog
             // 
-            this.textBoxLog.Location = new System.Drawing.Point(12, 85);
+            this.textBoxLog.Location = new System.Drawing.Point(12, 65);
             this.textBoxLog.Multiline = true;
             this.textBoxLog.Name = "textBoxLog";
             this.textBoxLog.ReadOnly = true;
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxLog.Size = new System.Drawing.Size(231, 258);
+            this.textBoxLog.Size = new System.Drawing.Size(410, 278);
             this.textBoxLog.TabIndex = 4;
             this.toolTipPath.SetToolTip(this.textBoxLog, "Double click to popup");
             this.textBoxLog.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxLog_MouseDoubleClick);
@@ -96,9 +99,9 @@
             // 
             this.buttonHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonHelp.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonHelp.Location = new System.Drawing.Point(168, 3);
+            this.buttonHelp.Location = new System.Drawing.Point(360, 8);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(75, 23);
+            this.buttonHelp.Size = new System.Drawing.Size(62, 50);
             this.buttonHelp.TabIndex = 5;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -108,19 +111,48 @@
             // 
             this.comboBoxProjectPath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBoxProjectPath.FormattingEnabled = true;
-            this.comboBoxProjectPath.Location = new System.Drawing.Point(12, 30);
+            this.comboBoxProjectPath.Location = new System.Drawing.Point(90, 8);
             this.comboBoxProjectPath.Name = "comboBoxProjectPath";
-            this.comboBoxProjectPath.Size = new System.Drawing.Size(231, 20);
+            this.comboBoxProjectPath.Size = new System.Drawing.Size(199, 20);
             this.comboBoxProjectPath.TabIndex = 6;
+            this.comboBoxProjectPath.SelectedIndexChanged += new System.EventHandler(this.comboBoxProjectPath_SelectedIndexChanged);
             this.comboBoxProjectPath.MouseHover += new System.EventHandler(this.comboBoxProjectPath_MouseHover);
             this.comboBoxProjectPath.MouseMove += new System.Windows.Forms.MouseEventHandler(this.comboBoxProjectPath_MouseMove);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "CCS Builder";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // comboBoxBuildConfiguration
+            // 
+            this.comboBoxBuildConfiguration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.comboBoxBuildConfiguration.FormattingEnabled = true;
+            this.comboBoxBuildConfiguration.Location = new System.Drawing.Point(137, 36);
+            this.comboBoxBuildConfiguration.Name = "comboBoxBuildConfiguration";
+            this.comboBoxBuildConfiguration.Size = new System.Drawing.Size(152, 20);
+            this.comboBoxBuildConfiguration.TabIndex = 7;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 39);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(113, 12);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "BuildConfiguration";
             // 
             // FormMainWindow
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(255, 355);
+            this.ClientSize = new System.Drawing.Size(432, 355);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.comboBoxBuildConfiguration);
             this.Controls.Add(this.comboBoxProjectPath);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.textBoxLog);
@@ -152,6 +184,9 @@
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.ComboBox comboBoxProjectPath;
         private System.Windows.Forms.ToolTip toolTipPath;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ComboBox comboBoxBuildConfiguration;
+        private System.Windows.Forms.Label label2;
     }
 }
 

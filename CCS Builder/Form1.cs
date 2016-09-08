@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-
-
+using System.Xml;
 
 namespace CCS_Builder
 {
     public partial class FormMainWindow : Form
     {
+        DateTime startTime;
+
         FromDetail dlgDetail;
         public FormMainWindow()
         {
@@ -81,7 +82,14 @@ namespace CCS_Builder
             bwArgs args = new bwArgs();
             args.ws_path = comboBoxProjectPath.Text;
             args.eclipsec_path = default_exe;
+            args.build_configuration = comboBoxBuildConfiguration.Text;
+            args.clean = false;
+            if (Control.ModifierKeys == Keys.Control)
+            {
+                args.clean = true;
+            }
             BuildButton.Enabled = false;
+            startTime = DateTime.Now;
             textBoxLog.Text = ">>>> Start call CCSv5 <<<<\r\n\r\n";
             backgroundWorkerExec.RunWorkerAsync(args);
         }
@@ -93,6 +101,7 @@ namespace CCS_Builder
             if (FolderDialog.ShowDialog() == DialogResult.OK)
             {
                 this.comboBoxProjectPath.Text = FolderDialog.SelectedPath;
+                comboBoxProjectPath_SelectedIndexChanged(null, EventArgs.Empty);
             }
 
             //OpenFileDialog fileDialog = new OpenFileDialog();
@@ -118,9 +127,10 @@ namespace CCS_Builder
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string file in files)
             {
-                if (Path.GetExtension(file) == "")  //判断文件类型，只接受txt文件
+                if (Directory.Exists(file))
                 {
                     comboBoxProjectPath.Text = file;
+                    comboBoxProjectPath_SelectedIndexChanged(null, EventArgs.Empty);
                     return;
                 }
             }
@@ -172,13 +182,27 @@ namespace CCS_Builder
                     return;
                 }
 
+                string buildConfiguration = "";
+                buildConfiguration = (e.Argument as bwArgs).build_configuration;
+                if (buildConfiguration == "")
                 {
-                    string msg;
-                    msg = string.Format("Start with...\r\nWorkspace = {0}\r\nProject = {1}", ws, pj);
-                    backgroundWorkerExec.ReportProgress(0, msg);
+                    buildConfiguration = "Release";
                 }
 
-                tmp = string.Format("-noSplash -data \"{0}\" -application com.ti.ccstudio.apps.projectBuild -ccs.autoOpen -ccs.configuration Release -ccs.buildType incremental -ccs.projects {1}", ws, pj);
+                string buildMode = "incremental";
+                if ((e.Argument as bwArgs).clean)
+                {
+                    buildMode = "clean";
+                }
+
+                {
+                    string msg;
+                    msg = string.Format("Start with...\r\nWorkspace = {0}\r\nProject = {1}\r\nConfiguration = {2}\r\nMode = {3}", ws, pj, buildConfiguration, buildMode);
+                    backgroundWorkerExec.ReportProgress(0, msg);
+                    //System.Threading.Thread.Sleep(1000);
+                }
+
+                tmp = string.Format("-noSplash -data \"{0}\" -application com.ti.ccstudio.apps.projectBuild -ccs.autoOpen -ccs.autoImport -ccs.configuration {1} -ccs.buildType {3} -ccs.projects {2}", ws, buildConfiguration, pj, buildMode);
                 //backgroundWorkerExec.ReportProgress(0, string.Format("Compile command:\r\n{0}\r\n\r\n", tmp));
                 p.StartInfo.Arguments = tmp;
                 p.StartInfo.UseShellExecute = false;
@@ -225,7 +249,10 @@ namespace CCS_Builder
         private void backgroundWorkerExec_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             textBoxLog.AppendText("\r\n\r\n>>>> Finish call CCSv5 <<<<\r\n");
+            string timec = string.Format("\r\nTotal comsumed: {0}", (DateTime.Now - startTime).ToString(@"hh\:mm\:ss\.fff"));
+            textBoxLog.AppendText(timec);
             BuildButton.Enabled = true;
+            this.notifyIcon1.ShowBalloonTip(3000, "CCS Builder", "Operation completed", ToolTipIcon.Info);
         }
 
         private void backgroundWorkerExec_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -250,6 +277,7 @@ namespace CCS_Builder
 
         private void comboBoxProjectPath_MouseMove(object sender, MouseEventArgs e)
         {
+            //this.notifyIcon1.ShowBalloonTip(1000, "当前时间：", DateTime.Now.ToLocalTime().ToString(), ToolTipIcon.Info);
             //this.toolTipPath.SetToolTip(this.comboBoxProjectPath, this.comboBoxProjectPath.Text);
         }
 
@@ -265,6 +293,126 @@ namespace CCS_Builder
                 BuildButton.PerformClick();
             }
         }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (this.Visible)
+            {
+                this.Hide();
+            }
+            else
+            {
+                this.Show();
+            }
+        }
+
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+        }
+
+        private void comboBoxProjectPath_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string title = new DirectoryInfo(comboBoxProjectPath.Text).Name;
+                this.Text = "CCS Builder - " + title;
+                comboBoxBuildConfiguration.Items.Clear();
+                comboBoxBuildConfiguration.Text = "";
+
+                bool fDotcprojectFound = false;
+                bool IsRemoteProject = false;
+                // 搜索.cproject文件
+                string dot_cproject_file_path = "";
+
+//                 string[] dot_cproject_file_paths = Directory.GetFiles(comboBoxProjectPath.Text, ".cproject", SearchOption.TopDirectoryOnly);
+//                 if (dot_cproject_file_paths.Count() == 0) 
+//                     IsRemoteProject = true;
+//                 else
+//                 {
+//                     dot_cproject_file_path = dot_cproject_file_paths[0];
+//                     fDotcprojectFound = true;
+//                 }
+
+                if (File.Exists(comboBoxProjectPath.Text + @"\" + ".cproject"))
+                {
+                    dot_cproject_file_path = comboBoxProjectPath.Text + @"\" + ".cproject";
+                    fDotcprojectFound = true;
+                }
+                else
+                {
+                    IsRemoteProject = true;
+                }
+                    
+
+                if (IsRemoteProject)
+                {
+                    // 本地无.cproject文件，为远程Project，先通过本地.project找到.cproject可能存在的目录
+
+//                     string[] dot_project_file_paths = Directory.GetFiles(comboBoxProjectPath.Text, ".project", SearchOption.TopDirectoryOnly);
+//                     if (dot_project_file_paths.Count() == 0) return; // 也无.project文件，放弃
+                    string dot_project_file_path = "";
+                    if (File.Exists(comboBoxProjectPath.Text + @"\" + ".project"))
+                    {
+                        dot_project_file_path = comboBoxProjectPath.Text + @"\" + ".project";
+                    }
+                    else
+                        return;
+
+                   // string dot_project_file_path = dot_project_file_paths[0];
+
+                    XmlDocument xml = new XmlDocument();
+                    xml.Load(dot_project_file_path);
+                    XmlNodeList nodes = xml.SelectNodes("projectDescription/variableList/variable/name");
+                    foreach (XmlNode i in nodes)
+                    {
+                        if (i.InnerText == "copy_PARENT")
+                        {
+                            XmlNode value = i.ParentNode.SelectSingleNode("value");
+                            string dot_cproject_dir_path = value.InnerText;
+                            dot_cproject_dir_path = dot_cproject_dir_path.Replace("file:/", "");
+                            if (Directory.Exists(dot_cproject_dir_path))
+                            {
+                                string[] files = System.IO.Directory.GetFiles(dot_cproject_dir_path, ".cproject", System.IO.SearchOption.AllDirectories);
+                                if (files.Count() != 0)
+                                {
+                                    dot_cproject_file_path = files[0];
+                                    fDotcprojectFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!fDotcprojectFound) return;
+
+                XmlDocument xmlcproject = new XmlDocument();
+                xmlcproject.Load(dot_cproject_file_path);
+                XmlNodeList noodesk = xmlcproject.SelectNodes(@"cproject/storageModule/cconfiguration/storageModule");
+                foreach (XmlNode k in noodesk)
+                {
+                    foreach (XmlAttribute attr in k.Attributes)
+                    {
+                        if (attr.Name == "moduleId" && attr.Value == "org.eclipse.cdt.core.settings")
+                            foreach (XmlAttribute attr2 in k.Attributes)
+                            {
+                                if (attr2.Name == "name")
+                                {
+                                    //MessageBox.Show(attr2.Value);
+                                    comboBoxBuildConfiguration.Items.Add(attr2.Value);
+                                    comboBoxBuildConfiguration.SelectedIndex = comboBoxBuildConfiguration.Items.Count - 1;
+                                }
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = "";
+                msg = string.Format("执行失败\r\n\r\n{0}\r\n", ex);
+                backgroundWorkerExec.ReportProgress(0, msg);
+            }
+        }
     }
 }
 
@@ -273,4 +421,6 @@ class bwArgs
 {
     public string eclipsec_path;
     public string ws_path;
+    public string build_configuration;
+    public bool clean;
 }

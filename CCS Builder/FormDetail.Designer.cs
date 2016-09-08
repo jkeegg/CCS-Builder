@@ -36,7 +36,9 @@
             // 
             // textBoxDetail
             // 
+            this.textBoxDetail.BackColor = System.Drawing.SystemColors.Control;
             this.textBoxDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxDetail.ForeColor = System.Drawing.SystemColors.ControlText;
             this.textBoxDetail.Location = new System.Drawing.Point(0, 0);
             this.textBoxDetail.Multiline = true;
             this.textBoxDetail.Name = "textBoxDetail";
